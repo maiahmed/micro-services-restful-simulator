@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -138,14 +141,15 @@ public class Simulator {
 			obj = (JSONObject) resourceList.get(i);
 			outList.add(obj);
 		}
-		return outList;
+		if(outList==null)	throw new WebApplicationException(Response.Status.NOT_FOUND);
+	    return outList;
 	}
 
 	public static ArrayList<JSONObject> getAllFilteredRecords(String resource,
 			String subResource) {
 		if (subResource == null) {
 			System.out.println("please edit url with filtration or remove it");
-			return null;
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		} else {
 			JSONArray resourceList = SimulatorDA.readFile(resource);
 			JSONObject obj = new JSONObject();
@@ -166,18 +170,21 @@ public class Simulator {
 	public static JSONObject getObjectByID(String id, String resource) {
 		System.out.println("id: " + id + " ," + " ,resource: " + resource);
 		if (!numberOrNot(id)) {
-			System.out
-					.println("Not applicable, id should be a number, please try again.");
+			System.out.println("Not applicable, id should be a number, please try again.");
 			return null;
+
 		} else {
 			JSONObject requiredObj = chkID(id, resource);
 			System.out.println("el obj aho : " + requiredObj);
 
 			if (requiredObj == null) {
 				System.out.println("---Not Found---");
-				return null;
-			} else
+				
+			return null;	
+			} else{
+				Response.ok(requiredObj).status(200).build(); // 201 is the response code
 				return requiredObj;
+			}
 		}
 	}
 
@@ -185,27 +192,27 @@ public class Simulator {
 			String resource) {
 		if (subResource == null) {
 			System.out.println("please edit url with filtration or remove it");
-			return null;
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		} else {
 			System.out.println("id, " + id + " ,subRes: " + subResource
 					+ " ,Resource: " + resource);
 			ArrayList<String> filtersList = new ArrayList<String>();
 			if (!numberOrNot(id)) {
-				System.out
-						.println("Not applicable, id should be a number, please try again.");
-				return null;
+				System.out.println("Not applicable, id should be a number, please try again.");
+				throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
 			} else {
 				filtersList = fillFilteredList(subResource);
 				JSONObject obj = getObjectByID(id, resource);
 				if (obj == null) {
 					System.out.println("---Not Found---");
-					return null;
+					throw new WebApplicationException(Response.Status.NOT_FOUND);
 				} else {
 					JSONObject out = filters(filtersList, obj);
 
 					if (out == null) {
 						System.out.println("---Not Found---");
-						return null;
+						throw new WebApplicationException(Response.Status.NOT_FOUND);
 					} else
 						return out;
 				}
@@ -222,36 +229,38 @@ public class Simulator {
 		return true;
 	}
 
-	public static void createObjectByID(JSONObject jsonlist, String resource) {
+	public static JSONObject createObjectByID(JSONObject jsonlist,
+			String resource) {
 		JSONArray resourceList = SimulatorDA.readFile(resource);
 
 		System.out.println("-----------------arr----------------");
 		String id = jsonlist.get("ID").toString();
 		System.out.println(jsonlist.get("ID"));
-		JSONObject firstObj = (JSONObject) resourceList.get(0);
+//		JSONObject firstObj = (JSONObject) resourceList.get(0);
 		if (!numberOrNot(id)) {
 			System.out
 					.println("Not applicable, id should be a number, please try again.");
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		} else {
 			System.out.println("--------ana ---------- "
 					+ getObjectByID(id, resource));
-			Set<String> set1 = checkValidationOfPost(firstObj);
-			Set<String> set2 = checkValidationOfPost(jsonlist);
-			if (set2.containsAll(set1)) {
+//			Set<String> set1 = checkValidationOfPost(firstObj);
+//			Set<String> set2 = checkValidationOfPost(jsonlist);
+//			if (set2.containsAll(set1)) {
 				JSONObject chkid = chkID(id, resource);
 
 				if (chkid == null) {
 					System.out.println("=====ana hna=======");
 					resourceList.add(jsonlist);
 					SimulatorDA.write(resourceList, resource);
+					Response.ok(jsonlist).status(200).build(); // 201 is the response code
+					return jsonlist;
 				} else {
 					System.out.println("Not applicable, id already exist");
-					// personObject= null;
+					throw new WebApplicationException(Response.Status.NOT_FOUND);
 				}
-			} else {
-				System.out
-						.println("two objects dosn't have the same structure");
-			}
+			
+				
 		}
 
 	}
@@ -266,8 +275,10 @@ public class Simulator {
 			resourceList.remove(chkid);
 			System.out.println("Aft: " + resourceList.size());
 			SimulatorDA.write(resourceList, resource);
+			 throw new WebApplicationException(Response.Status.OK);
 		} else {
 			System.out.println("---Not Found ---");
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 		}
 
@@ -281,12 +292,16 @@ public class Simulator {
 		filtersList = fillFilteredListWithUpdatedValues(subResource, resource);
 		if (filtersList == null) {
 			System.out.println("Can't update with this ID");
-			return null;
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
 		} else {
 			JSONObject obj = getObjectByID(id, resource);
+			resourceList.remove(obj);
+
 			if (obj == null) {
 				System.out.println("---Not Found---");
-				return null;
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
+
 			} else {
 				for (int i = 0; i < filtersList.size(); i++) {
 					System.out.println("key: "
@@ -299,11 +314,12 @@ public class Simulator {
 				// JSONObject out = filters(filtersList, obj);
 				if (obj == null) {
 					System.out.println("---Not Found---");
-					return null;
+					throw new WebApplicationException(Response.Status.NOT_FOUND);
 				} else {
 					System.out.println(obj.get("name") + " , ind: "
-							+ objetcIndex);
-					resourceList.set(objetcIndex, obj);
+							+ getObjectIndex());
+					resourceList.remove(obj);
+					resourceList.add(obj);
 					SimulatorDA.write(resourceList, resource);
 					return obj;
 				}
@@ -320,7 +336,8 @@ public class Simulator {
 		if (!numberOrNot(id)) {
 			System.out
 					.println("Not applicable to update, id should be a number, please try again.");
-			return null;
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
 		} else {
 			System.out.println(jsonlist.get("ID"));
 			JSONObject firstObj = (JSONObject) resourceList.get(0);
@@ -333,6 +350,7 @@ public class Simulator {
 
 				if (chkid == null) { // / not found
 					System.out.println("Not applicable,,, id does not exist");
+					throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 				} else { // exist so i will update it
 					resourceList.remove(updatedOne);
@@ -343,6 +361,8 @@ public class Simulator {
 			} else {
 				System.out
 						.println("two objects dosn't have the same structure");
+				throw new WebApplicationException(Response.Status.FORBIDDEN);
+
 			}
 			return jsonlist;
 		}
@@ -380,6 +400,7 @@ public class Simulator {
 				outList.add(out);
 			}
 		}
+		if(outList==null)throw new WebApplicationException(Response.Status.NOT_FOUND);
 		return outList;
 	}
 }

@@ -8,7 +8,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
 
@@ -50,7 +52,9 @@ public class SimulatorServiceImpl {
 			@PathParam("resource") String resource,
 			@PathParam("subResourceFilter") String subResourceFilter,
 			@PathParam("subResourceCond") String subResourceCond) {
-		return Simulator.getAllFilteredRecordsWithConditions(resource, subResourceFilter,subResourceCond);
+		ArrayList<JSONObject> obj = Simulator.getAllFilteredRecordsWithConditions(resource, subResourceFilter,subResourceCond);
+		
+			return Simulator.getAllFilteredRecordsWithConditions(resource, subResourceFilter,subResourceCond);
 	}
 	
 	
@@ -62,7 +66,11 @@ public class SimulatorServiceImpl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JSONObject getObjectByID(@PathParam("id") String id,
 			@PathParam("resource") String resource) {
-		return Simulator.getObjectByID(id, resource);
+		JSONObject obj = Simulator.getObjectByID(id, resource);
+		if(obj==null || id.equals(null))
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		Response.ok(obj).status(200).build(); // 201 is the response code
+		return obj;
 	}
 	
 	//http://localhost:8080/WS_restful-simulator/rest/campaigns.json/campaign_id=30/filters-name&type
@@ -81,9 +89,12 @@ public class SimulatorServiceImpl {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void createObjectByID(JSONObject jsonlist,
+	public JSONObject createObjectByID(JSONObject jsonlist,
 			@PathParam("resource") String resource) {
-		Simulator.createObjectByID(jsonlist, resource);
+		JSONObject obj = Simulator.createObjectByID(jsonlist, resource);
+		Response.ok(obj).status(200).build(); // 200 is the response code
+
+		return obj;
 	}
 	
 	//http://localhost:8080/WS_restful-simulator/rest/campaigns.json/campaign_id
@@ -94,8 +105,10 @@ public class SimulatorServiceImpl {
 	public JSONObject updateMultipleFieldsByFilters(JSONObject jsonlist,
 			
 			@PathParam("resource") String resource) {
-		return Simulator.updateMultipleFieldsByFilters(jsonlist,
+		JSONObject obj = Simulator.updateMultipleFieldsByFilters(jsonlist,
 				resource);
+		Response.ok(obj).status(200).build(); // 201 is the response code
+		return obj;
 	}
 
 	// http://localhost:8080/WS_restful-simulator/rest/campaigns.json/campaign_id=300/filters-name=pppp
@@ -116,7 +129,9 @@ public class SimulatorServiceImpl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public void deleteObjectByID(@PathParam("id") String id,
 			@PathParam("resource") String resource) {
+		
 		Simulator.deleteObjectByID(id, resource);
+		
 
 	}
 
