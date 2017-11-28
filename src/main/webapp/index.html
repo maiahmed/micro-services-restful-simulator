@@ -2,15 +2,17 @@
 <html lang="en">
 
 <head>
-	<title>Bootstrap Example</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel = "stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="JS/script.js"></script>
-</head>
 
+<title>CRUD API</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="css/jsontree.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+
+</head>
 <body>
 
 	<div class="container">
@@ -18,24 +20,73 @@
 			<h1>Call REST service</h1>
 		</div>
 		<form class="form-horizontal" onsubmit="return false;">
-				<div class="form-group">
-					<label class ="control-label col-sm-2" for="resource">Resource name</label>
-					<div class ="col-sm-10">
-						<input type="text" name="resource" class="form-control" id="resource" placeholder="Enter the resource name 'ex: x.json' ">
-					</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="resource">Resource
+					name</label>
+				<div class="col-sm-10">
+					<input type="text" name="resource" class="form-control"
+						id="resource" placeholder="Enter the resource name 'ex: x.json' ">
 				</div>
+			</div>
 
-				<div class = "form-group">
-					<div class="col-sm-10 col-sm-offset-2">
-						<button  type="Submit" class="btn btn-default"  onclick="getDetailes()">Submit</button>
+			<div class="form-group">
+				<div class="col-sm-10 col-sm-offset-2">
+					<div class="btn-group">
+						<button type="Submit" class="btn btn-success dropdown-toggle"
+							data-toggle="dropdown">
+							Get <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="#" onclick="getDetailes(1,'GET')">Get all
+									data</a></li>
+							<li><a href="#" onclick="getDetailes(2,'GET')">Get by ID</a>
+							<li>
+						</ul>
+
 					</div>
+					<button type="Submit" class="btn btn-primary"
+						onclick="getDetailes(3, 'POST')">Create</button>
+					<button type="Submit" class="btn btn-warning"
+						onclick="getDetailes(4, 'PATCH')">Update</button>
+					<button id='del' type="Submit" class="btn btn-danger"
+						onclick="getDetailes(5, 'DELETE')">Delete</button>
+
+
 				</div>
+			</div>
 		</form>
 
-		<div id="tmp"></div>
+		<div id="showData" class="table-responsive"></div>
+
+		<!-- Starting Model -->
+		<div class="modal fade" id="myModal" role="dialog">  <!-- id the same of dataTarget of button -->
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Success Message!</h4>
+					</div>
+					<div class="modal-body">
+						<p>Item deleted successfully.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Ending Model -->
+
 	</div>
 
 
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="JS/jsontree.js"></script>
+	<script type="text/javascript" src="JS/script.js"></script>
 
 </body>
 </html>
