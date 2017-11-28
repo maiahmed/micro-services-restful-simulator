@@ -14,7 +14,6 @@ function getDetailes(req, methode) {
 		createOne();
 		document.getElementById("insertButton").onclick = function() {
 			var jsonObj = document.getElementById("inputJson").value;
-			// xmlhttp.setRequestHeader("Content-type", "application/json");
 			xmlhttp.open(methode, url, true);
 			xmlhttp.setRequestHeader("Content-Type", "application/json");
 			xmlhttp.onreadystatechange = function() {// Call a function when
@@ -23,28 +22,20 @@ function getDetailes(req, methode) {
 					myObj = JSON.parse(this.responseText);
 					console.log(myObj);
 					getOne();
-
-					// console.log("A5eraaaaaaaan");
 				}
 			};
-			// console.log("Bef");
 			xmlhttp.send(jsonObj);
-			// console.log("AF");
 		};
-		// jsonObj = JSON.stringify(jsonObj);
 	} else {
 		$('#myModal').modal('hide');
 		$('#myCreateModal').modal('hide');
 		document.getElementById('showData').style.display = 'block'; // Hide
 
 		xmlhttp.onreadystatechange = function() {
-			
+
 			if (this.status == 500) {
 				console.log("SERVER");
 			} else if (this.readyState == 4 && this.status == 200) {
-				
-				// console.log("YUP");
-				// console.log(JSON.parse(this.responseText));
 				if (req == 1) {
 					myObj = JSON.parse(this.responseText);
 					getAll();
@@ -52,42 +43,26 @@ function getDetailes(req, methode) {
 					myObj = JSON.parse(this.responseText);
 					getOne();
 				} else if (req == 5) {
-					// console.log("I DELETE ITRRRRRRRRRRRRRRRRRRRR");
 					deleteOne();
 				}
 			}
-//			else if (this.status == 404) {
-//				// console.log("ERORRRRRRRR");
-//				error();
-//			}
 		};
-
 		xmlhttp.open(methode, url, true);
 		xmlhttp.send(jsonObj);
-
 	}
 }
 
 function createOne() {
-	// alert("i'm in create");
-	// myCreateModal
-	// document.getElementById('showData').style.display = 'none'; // Hide
 	var button = document.getElementById('create');
 	button.setAttribute('data-toggle', 'modal');
 	button.setAttribute('data-target', '#myCreateModal');
-//	$('#myCreateModal').modal('show');
 	document.getElementById("insertButton").onclick = function() {
 		var jsonObj = document.getElementById("inputJson").value;
 		console.log(jsonObj);
 		return jsonObj;
 	};
-
-	// return jsonObj;
 }
 function error() {
-	// alert("i'm in error");
-
-	// document.getElementById('showData').style.display = 'none'; // Hide
 	document.getElementById('headMsg').innerHTML = 'Error!';
 	document.getElementById('bodyMsg').innerHTML = 'Please insert correct path';
 	document.getElementById('bodyMsg').setAttribute('class',
@@ -105,8 +80,6 @@ function createJsonTree(obj) {
 function getAll() {
 	// alert("i'm in all");
 	var col = [];
-	// col.push('#');
-	// list of object keys
 	for (var i = 0; i < myObj.length; i++) {
 		for ( var key in myObj[i]) {
 			if (col.indexOf(key) === -1) {
@@ -119,16 +92,11 @@ function getAll() {
 	table.className = "table table-bordered table-hover table-fixed";
 
 	// CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
 	var thead = document.createElement("thead");
 	table.appendChild(thead);
 
 	var tr = document.createElement("tr"); // TABLE ROW.
 	tr.className = 'success';
-
-	// tr.addChild(inp);
-	// <th><input type="checkbox" id="checkall" /></th>
-
 	thead.appendChild(tr);
 
 	for (var i = 0; i < col.length; i++) {
@@ -179,13 +147,10 @@ function getOne() {
 		}
 
 	}
-	// console.log(col);
-	// CREATE DYNAMIC TABLE.
 	var table = document.createElement("table");
 	table.className = "table table-bordered table-hover table-fixed";
 
 	// CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
 	var thead = document.createElement("thead");
 	table.appendChild(thead);
 
@@ -208,12 +173,6 @@ function getOne() {
 	for (var j = 0; j < col.length; j++) {
 
 		var tabCell = tr.insertCell(-1);
-		// if (j == 0) {
-		// var chkBox = document.createElement('input');
-		// chkBox.setAttribute('type', 'checkbox');
-		// tabCell.appendChild( chkBox);
-		// continue;
-		// }
 		var cellObj = myObj[col[j]];
 		if (typeof (cellObj) == 'object') {
 			var tree = createJsonTree(myObj[col[j]]);
