@@ -1,32 +1,101 @@
 var myObj;
 function getDetailes(req, methode) {
+	// alert("i'm in Details");
 	var resource = document.getElementById('resource').value;
 	var url = 'http://localhost:8080/WS_restful-simulator/rest/' + resource;
 	var xmlhttp = new XMLHttpRequest();
+	var jsonObj = null;
 
-	xmlhttp.onreadystatechange = function() {
-		if (this.status == 500) {
-			console.log("SERVER");
-		} else if (this.readyState == 4 && this.status == 200) {
-			// console.log("YUP");
-			// console.log(JSON.parse(this.responseText));
-			if (req == 1) {
-				myObj = JSON.parse(this.responseText);
-				getAll();
-			} else if (req == 2) {
-				myObj = JSON.parse(this.responseText);
-				getOne();
-			} else if (req == 5) {
-				console.log("I DELETE IT");
-				deleteOne();
+	if (req == 3) {
+		$('#myModal').modal('hide');
+		$('#myCreateModal').modal('hide');
+		document.getElementById('showData').style.display = 'block'; // Hide
+
+		createOne();
+		document.getElementById("insertButton").onclick = function() {
+			var jsonObj = document.getElementById("inputJson").value;
+			// xmlhttp.setRequestHeader("Content-type", "application/json");
+			xmlhttp.open(methode, url, true);
+			xmlhttp.setRequestHeader("Content-Type", "application/json");
+			xmlhttp.onreadystatechange = function() {// Call a function when
+				// the state changes.
+				if (this.readyState == 4 && this.status == 200) {
+					myObj = JSON.parse(this.responseText);
+					console.log(myObj);
+					getOne();
+
+					// console.log("A5eraaaaaaaan");
+				}
+			};
+			// console.log("Bef");
+			xmlhttp.send(jsonObj);
+			// console.log("AF");
+		};
+		// jsonObj = JSON.stringify(jsonObj);
+	} else {
+		$('#myModal').modal('hide');
+		$('#myCreateModal').modal('hide');
+		document.getElementById('showData').style.display = 'block'; // Hide
+
+		xmlhttp.onreadystatechange = function() {
+			
+			if (this.status == 500) {
+				console.log("SERVER");
+			} else if (this.readyState == 4 && this.status == 200) {
+				
+				// console.log("YUP");
+				// console.log(JSON.parse(this.responseText));
+				if (req == 1) {
+					myObj = JSON.parse(this.responseText);
+					getAll();
+				} else if (req == 2 || req == 4) {
+					myObj = JSON.parse(this.responseText);
+					getOne();
+				} else if (req == 5) {
+					// console.log("I DELETE ITRRRRRRRRRRRRRRRRRRRR");
+					deleteOne();
+				}
 			}
-		} else if (this.status == 404) {
-			console.log("ERORRRRRRRR");
-		}
+//			else if (this.status == 404) {
+//				// console.log("ERORRRRRRRR");
+//				error();
+//			}
+		};
+
+		xmlhttp.open(methode, url, true);
+		xmlhttp.send(jsonObj);
+
+	}
+}
+
+function createOne() {
+	// alert("i'm in create");
+	// myCreateModal
+	// document.getElementById('showData').style.display = 'none'; // Hide
+	var button = document.getElementById('create');
+	button.setAttribute('data-toggle', 'modal');
+	button.setAttribute('data-target', '#myCreateModal');
+//	$('#myCreateModal').modal('show');
+	document.getElementById("insertButton").onclick = function() {
+		var jsonObj = document.getElementById("inputJson").value;
+		console.log(jsonObj);
+		return jsonObj;
 	};
 
-	xmlhttp.open(methode, url, true);
-	xmlhttp.send(null);
+	// return jsonObj;
+}
+function error() {
+	// alert("i'm in error");
+
+	// document.getElementById('showData').style.display = 'none'; // Hide
+	document.getElementById('headMsg').innerHTML = 'Error!';
+	document.getElementById('bodyMsg').innerHTML = 'Please insert correct path';
+	document.getElementById('bodyMsg').setAttribute('class',
+			'alert alert-danger');
+	var button = document.getElementById('get');
+	button.setAttribute('data-toggle', 'modal');
+	button.setAttribute('data-target', '#myModal');
+	$('#myModal').modal('show');
 
 }
 function createJsonTree(obj) {
@@ -34,6 +103,7 @@ function createJsonTree(obj) {
 }
 
 function getAll() {
+	// alert("i'm in all");
 	var col = [];
 	// col.push('#');
 	// list of object keys
@@ -74,20 +144,14 @@ function getAll() {
 	// ADD JSON DATA TO THE TABLE AS ROWS.
 	for (var i = 0; i < myObj.length; i++) {
 		tr = document.createElement("tr");
-
 		for (var j = 0; j < col.length; j++) {
-
 			var tabCell = tr.insertCell(-1);
-			// if (j == 0) {
-			// var chkBox = document.createElement('input');
-			// chkBox.setAttribute('type', 'checkbox');
-			// tabCell.appendChild( chkBox);
-			// continue;
-			// }
 			var cellObj = myObj[i][col[j]];
+
 			if (typeof (cellObj) == 'object') {
 				var tree = createJsonTree(myObj[i][col[j]]);
-				console.log(myObj[i]);
+
+				console.log(tree);
 				tabCell.innerHTML = tree;
 			} else {
 				tabCell.innerHTML = myObj[i][col[j]];
@@ -103,6 +167,10 @@ function getAll() {
 }
 
 function getOne() {
+	// alert("i'm in one");
+
+	document.getElementById('showData').style.display = 'block'; // Hide
+
 	var col = [];
 	// list of object keys
 	for ( var key in myObj) {
@@ -111,7 +179,7 @@ function getOne() {
 		}
 
 	}
-	console.log(col);
+	// console.log(col);
 	// CREATE DYNAMIC TABLE.
 	var table = document.createElement("table");
 	table.className = "table table-bordered table-hover table-fixed";
@@ -165,15 +233,15 @@ function getOne() {
 }
 
 function deleteOne() {
-	// data-toggle="modal" data-target="#myModal"
+	// alert("i'm in delete");
+	document.getElementById('showData').style.display = 'none'; // Hide
 	var button = document.getElementById('del');
+	document.getElementById('headMsg').innerHTML = 'Delete!';
+	document.getElementById('bodyMsg').innerHTML = 'Item deleted successfully';
+	document.getElementById('bodyMsg').setAttribute('class',
+			'alert alert-success');
 	button.setAttribute('data-toggle', 'modal');
 	button.setAttribute('data-target', '#myModal');
-	$('#myModal').modal('show'); 
-	
-//	 $(window).load(function(){        
-//		   $('#myModal').modal('show');
-//		    }); 
-
+	$('#myModal').modal('show');
 
 }
