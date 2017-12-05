@@ -1,3 +1,12 @@
 .table-responsive {
     max-height:400px;
 }
+#createForm{display: none;}
+#create {
+    margin-bottom: 25px;
+}
+
+    :required  {  
+	 background: url(https://cdn0.iconfinder.com/data/icons/fugue/icon/asterisk-small.png) no-repeat;
+	 background-position:right top;
+	}

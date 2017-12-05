@@ -3,11 +3,11 @@
 
 <head>
 <script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="JS/jsontree.js"></script>
-	<script type="text/javascript" src="JS/script.js"></script>
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="JS/jsontree.js"></script>
+<script type="text/javascript" src="JS/script.js"></script>
 
 
 <title>CRUD API</title>
@@ -20,50 +20,37 @@
 <link href="css/style.css" rel="stylesheet">
 
 </head>
-<body>
+<body onload="getDetailes(1,'GET');">
 
 	<div class="container">
 		<div class="page-header">
+			
+			<button type="button" class="btn btn-success" onclick="getDetailes(1,'GET');">
+				<span class="glyphicon glyphicon-home"></span>
+			</button>
 			<h1>Call REST service</h1>
 		</div>
 		<form class="form-horizontal" onsubmit="return false;">
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="resource">Resource
-					name</label>
+			<div class="btn-group-vertical">
+				<button id="create" type="Submit" class="btn btn-primary"
+					onclick="getDetailes(3, 'POST');">Create</button>
+
+			</div>
+
+			<div class="form-group" id="searchTab" style="display: none;">
+				<label class="control-label col-sm-2" for="myInputSearch">Search
+					for specific Value.</label>
+
 				<div class="col-sm-10">
-					<input type="text" name="resource" class="form-control"
-						id="resource" placeholder="Enter the resource name 'ex: x.json' ">
+					<input type="text" class="form-control" id="myInputSearch"
+						placeholder="Search">
 				</div>
 			</div>
 
-			<div class="form-group">
-				<div class="col-sm-10 col-sm-offset-2">
-					<div class="btn-group">
-						<button id="get" type="Submit"
-							class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-							Get <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a onclick="getDetailes(1,'GET');">Get all data</a></li>
-							<li><a onclick="getDetailes(2,'GET');">Get by ID</a>
-							<li>
-						</ul>
-
-					</div>
-					<button id="create" type="Submit" class="btn btn-primary"
-						onclick="getDetailes(3, 'POST');">Create</button>
-					<button type="Submit" class="btn btn-warning"
-						onclick="getDetailes(4, 'PATCH');">Update</button>
-					<button id='del' type="Submit" class="btn btn-danger"
-						onclick="getDetailes(5, 'DELETE');">Delete</button>
-
-
-				</div>
-			</div>
 		</form>
 
 		<div id="showData" class="table-responsive"></div>
-		
+
 		<!-- Starting Model -->
 		<div class="modal fade" id="myModal" role="dialog">
 			<!-- id the same of dataTarget of button -->
@@ -84,44 +71,43 @@
 			</div>
 		</div>
 		<!-- Ending Model -->
-		
+
 		<!-- Modal for insert -->
-	<div class="modal fade" id="myCreateModal" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+		<div class="modal fade" id="myCreateModal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
 						<h4 class="modal-title">Create new object!</h4>
-				</div>
-				<!-- Modal Body -->
-				<div class="modal-body">
-					<form class="form-horizontal" role="form" onsubmit="return false;">
-						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputJson">Json
-								Object</label>
-							<div class="col-sm-10">
-								<textarea class="form-control" id="inputJson"
-									placeholder="Json object..."></textarea>
+					</div>
+					<!-- Modal Body -->
+					<div class="modal-body">
+						<form class="form-horizontal" role="form" onsubmit="return false;">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="inputJson">Json
+									Object</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" id="inputJson"
+										placeholder="Json object..."></textarea>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-offset-2 col-sm-10">
-								<button id='insertButton' type="submit" class="btn btn-warning">Insert</button>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<button id='insertButton' type="submit" class="btn btn-warning"></button>
+								</div>
 							</div>
-						</div>
-					</form>
-				</div>
-				<!-- Modal Footer -->
-				<div class="modal-footer">
-					<button id="closeInsert" type="button" class="btn btn-default" data-dismiss="modal">
-						Close</button>
+						</form>
+					</div>
+					<!-- Modal Footer -->
+					<div class="modal-footer">
+						<button id="closeInsert" type="button" class="btn btn-default"
+							data-dismiss="modal">Close</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	</div>
-	
 
 
 
@@ -136,6 +122,7 @@
 
 
 
-	
+
+
 </body>
 </html>

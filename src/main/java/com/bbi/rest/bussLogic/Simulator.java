@@ -141,8 +141,9 @@ public class Simulator {
 			obj = (JSONObject) resourceList.get(i);
 			outList.add(obj);
 		}
-		if(outList==null)	throw new WebApplicationException(Response.Status.NOT_FOUND);
-	    return outList;
+		if (outList == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		return outList;
 	}
 
 	public static ArrayList<JSONObject> getAllFilteredRecords(String resource,
@@ -170,7 +171,8 @@ public class Simulator {
 	public static JSONObject getObjectByID(String id, String resource) {
 		System.out.println("id: " + id + " ," + " ,resource: " + resource);
 		if (!numberOrNot(id)) {
-			System.out.println("Not applicable, id should be a number, please try again.");
+			System.out
+					.println("Not applicable, id should be a number, please try again.");
 			return null;
 
 		} else {
@@ -179,10 +181,11 @@ public class Simulator {
 
 			if (requiredObj == null) {
 				System.out.println("---Not Found---");
-				
-			return null;	
-			} else{
-				Response.ok(requiredObj).status(200).build(); // 201 is the response code
+
+				return null;
+			} else {
+				Response.ok(requiredObj).status(200).build(); // 201 is the
+																// response code
 				return requiredObj;
 			}
 		}
@@ -198,7 +201,8 @@ public class Simulator {
 					+ " ,Resource: " + resource);
 			ArrayList<String> filtersList = new ArrayList<String>();
 			if (!numberOrNot(id)) {
-				System.out.println("Not applicable, id should be a number, please try again.");
+				System.out
+						.println("Not applicable, id should be a number, please try again.");
 				throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
 			} else {
@@ -212,7 +216,8 @@ public class Simulator {
 
 					if (out == null) {
 						System.out.println("---Not Found---");
-						throw new WebApplicationException(Response.Status.NOT_FOUND);
+						throw new WebApplicationException(
+								Response.Status.NOT_FOUND);
 					} else
 						return out;
 				}
@@ -236,31 +241,38 @@ public class Simulator {
 		System.out.println("-----------------arr----------------");
 		String id = jsonlist.get("ID").toString();
 		System.out.println(jsonlist.get("ID"));
-//		JSONObject firstObj = (JSONObject) resourceList.get(0);
+		JSONObject firstObj = (JSONObject) resourceList.get(0);
 		if (!numberOrNot(id)) {
 			System.out
 					.println("Not applicable, id should be a number, please try again.");
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+			return null;
 		} else {
 			System.out.println("--------ana ---------- "
 					+ getObjectByID(id, resource));
-//			Set<String> set1 = checkValidationOfPost(firstObj);
-//			Set<String> set2 = checkValidationOfPost(jsonlist);
-//			if (set2.containsAll(set1)) {
+			Set<String> set1 = checkValidationOfPost(firstObj);
+			Set<String> set2 = checkValidationOfPost(jsonlist);
+			if (set2.containsAll(set1)) {
 				JSONObject chkid = chkID(id, resource);
 
 				if (chkid == null) {
 					System.out.println("=====ana hna=======");
 					resourceList.add(jsonlist);
 					SimulatorDA.write(resourceList, resource);
-					Response.ok(jsonlist).status(200).build(); // 201 is the response code
+					 // 201 is the
+																// response code
 					return jsonlist;
 				} else {
 					System.out.println("Not applicable, id already exist");
-					throw new WebApplicationException(Response.Status.NOT_FOUND);
-				}
-			
+					return null;
 				
+				}
+			} else {
+				System.out
+						.println("two objects dosn't have the same structure");
+				return null;
+
+			}
+
 		}
 
 	}
@@ -275,7 +287,7 @@ public class Simulator {
 			resourceList.remove(chkid);
 			System.out.println("Aft: " + resourceList.size());
 			SimulatorDA.write(resourceList, resource);
-			 throw new WebApplicationException(Response.Status.OK);
+			throw new WebApplicationException(Response.Status.OK);
 		} else {
 			System.out.println("---Not Found ---");
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -333,6 +345,7 @@ public class Simulator {
 
 		System.out.println("-----------------arr----------------");
 		String id = jsonlist.get("ID").toString();
+		JSONObject old = getObjectByID(id, resource);
 		if (!numberOrNot(id)) {
 			System.out
 					.println("Not applicable to update, id should be a number, please try again.");
@@ -340,30 +353,27 @@ public class Simulator {
 
 		} else {
 			System.out.println(jsonlist.get("ID"));
-			JSONObject firstObj = (JSONObject) resourceList.get(0);
-			JSONObject updatedOne = (JSONObject) resourceList
-					.get(getObjectIndex());
-			Set<String> set1 = checkValidationOfPost(firstObj);
-			Set<String> set2 = checkValidationOfPost(jsonlist);
-			if (set2.containsAll(set1)) {
-				JSONObject chkid = chkID(id, resource);
-
-				if (chkid == null) { // / not found
-					System.out.println("Not applicable,,, id does not exist");
-					throw new WebApplicationException(Response.Status.NOT_FOUND);
-
-				} else { // exist so i will update it
-					resourceList.remove(updatedOne);
-					resourceList.add(jsonlist);
-					SimulatorDA.write(resourceList, resource);
-					// personObject= null;
-				}
-			} else {
+			JSONObject chkid = chkID(id, resource);
+			if (chkid == null) { // / not found
 				System.out
-						.println("two objects dosn't have the same structure");
-				throw new WebApplicationException(Response.Status.FORBIDDEN);
+						.println("updating Not applicable,,, id does not exist");
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
 
+			} else { // exist so i will update it
+				resourceList.remove(old);
+				System.out.println("BEFOOO " + resourceList.size());
+				resourceList.add(jsonlist);
+				System.out.println("AFTTTT " + resourceList.size());
+
+				SimulatorDA.write(resourceList, resource);
+				// personObject= null;
 			}
+			// } else {
+			// System.out
+			// .println("two objects dosn't have the same structure");
+			// throw new WebApplicationException(Response.Status.FORBIDDEN);
+			//
+			// }
 			return jsonlist;
 		}
 	}
@@ -400,7 +410,8 @@ public class Simulator {
 				outList.add(out);
 			}
 		}
-		if(outList==null)throw new WebApplicationException(Response.Status.NOT_FOUND);
+		if (outList == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
 		return outList;
 	}
 }

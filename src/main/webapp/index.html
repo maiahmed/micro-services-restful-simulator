@@ -3,13 +3,17 @@
 
 <head>
 <script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="JS/jsontree.js"></script>
-	<script type="text/javascript" src="JS/script.js"></script>
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="JS/jsontree.js"></script>
+<script type="text/javascript" src="JS/script.js"></script>
 
-
+<script type="text/javascript">
+	var count = 1;
+	count++;
+	console.log(count);
+</script>
 <title>CRUD API</title>
 
 <meta charset="utf-8">
@@ -20,50 +24,35 @@
 <link href="css/style.css" rel="stylesheet">
 
 </head>
-<body>
+<body onload="getAll();">
 
 	<div class="container">
+	
 		<div class="page-header">
-			<h1>Call REST service</h1>
+			<h1>
+				<a href="" onclick="getAll();"><span
+					class="glyphicon glyphicon-refresh"></span></a> Call REST service
+			</h1>
 		</div>
 		<form class="form-horizontal" onsubmit="return false;">
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="resource">Resource
-					name</label>
+			<a id="create" type="Submit" class="btn btn-primary btn-block"
+				data-toggle="modal" data-target="#myCreateForm"
+				onclick="$('#createForm').show();"> <span
+				class="glyphicon glyphicon-plus"></span> <span><strong>Add</strong></span>
+			</a>
+			<div class="form-group" id="searchTab" style="display: none;">
+				<label class="control-label col-sm-2" for="myInputSearch">Search
+					for specific Value.</label>
+
 				<div class="col-sm-10">
-					<input type="text" name="resource" class="form-control"
-						id="resource" placeholder="Enter the resource name 'ex: x.json' ">
+					<input type="text" class="form-control" id="myInputSearch"
+						placeholder="Search">
 				</div>
 			</div>
 
-			<div class="form-group">
-				<div class="col-sm-10 col-sm-offset-2">
-					<div class="btn-group">
-						<button id="get" type="Submit"
-							class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-							Get <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a onclick="getDetailes(1,'GET');">Get all data</a></li>
-							<li><a onclick="getDetailes(2,'GET');">Get by ID</a>
-							<li>
-						</ul>
-
-					</div>
-					<button id="create" type="Submit" class="btn btn-primary"
-						onclick="getDetailes(3, 'POST');">Create</button>
-					<button type="Submit" class="btn btn-warning"
-						onclick="getDetailes(4, 'PATCH');">Update</button>
-					<button id='del' type="Submit" class="btn btn-danger"
-						onclick="getDetailes(5, 'DELETE');">Delete</button>
-
-
-				</div>
-			</div>
 		</form>
 
 		<div id="showData" class="table-responsive"></div>
-		
 		<!-- Starting Model -->
 		<div class="modal fade" id="myModal" role="dialog">
 			<!-- id the same of dataTarget of button -->
@@ -72,10 +61,10 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h4 class="modal-title" id='headMsg'>Success Message!</h4>
+						<h4 class="modal-title" id='headMsg'></h4>
 					</div>
 					<div class="modal-body">
-						<p id='bodyMsg' class="">Item deleted successfully.</p>
+						<p id='bodyMsg' class=""></p>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -84,58 +73,237 @@
 			</div>
 		</div>
 		<!-- Ending Model -->
-		
+
 		<!-- Modal for insert -->
-	<div class="modal fade" id="myCreateModal" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+		<div class="modal fade" id="myCreateModal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
 						<h4 class="modal-title">Create new object!</h4>
-				</div>
-				<!-- Modal Body -->
-				<div class="modal-body">
-					<form class="form-horizontal" role="form" onsubmit="return false;">
-						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputJson">Json
-								Object</label>
-							<div class="col-sm-10">
-								<textarea class="form-control" id="inputJson"
-									placeholder="Json object..."></textarea>
+					</div>
+					<!-- Modal Body -->
+					<div class="modal-body">
+						<form class="form-horizontal" role="form" onsubmit="return false;">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="inputJson">Json
+									Object</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" id="inputJson"
+										placeholder="Json object..."></textarea>
+								</div>
 							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-offset-2 col-sm-10">
-								<button id='insertButton' type="submit" class="btn btn-warning">Insert</button>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<button id='insertButton' type="submit" class="btn btn-warning"></button>
+								</div>
 							</div>
-						</div>
-					</form>
-				</div>
-				<!-- Modal Footer -->
-				<div class="modal-footer">
-					<button id="closeInsert" type="button" class="btn btn-default" data-dismiss="modal">
-						Close</button>
+						</form>
+					</div>
+					<!-- Modal Footer -->
+					<div class="modal-footer">
+						<button id="closeInsert" type="button" class="btn btn-default"
+							data-dismiss="modal">Close</button>
+					</div>
 				</div>
 			</div>
 		</div>
+
+
+
+
+		<!-- FORMMMMMMMMMMMMM -->
+
+
+		<div class="modal fade" id="myCreateForm" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Add new object!</h4>
+					</div>
+					<!-- Modal Body -->
+					<div class="modal-body">
+						<form id="createForm" enctype='application/json' action=""
+							method="post">
+							<div class="form-group">
+								<label for="InputId">ID</label> <input type="text"
+									class="form-control" id="InputId" placeholder="Enter ID"
+									name="ID" required="required"> <small id="emailHelp"
+									class="form-text text-muted">updated id must be already
+									exist .</small>
+							</div>
+
+							<div class="form-group">
+								<label for="InputName">Name</label> <input type="text"
+									name="name" class="form-control" id="InputName"
+									placeholder="Name" required="required">
+							</div>
+
+							<div class="form-group">
+								<label for="InputDescription">description</label> <input
+									name="description" type="text" class="form-control"
+									id="InputDescription" placeholder="description">
+							</div>
+
+							<div class="form-group">
+								<label for="InputType">Type</label> <input name="type"
+									type="text" class="form-control" id="InputType"
+									placeholder="Type" required="required">
+							</div>
+
+
+							<div class="form-group">
+								<h3>
+									<span class="glyphicon glyphicon-collapse-down"
+										data-toggle="collapse" data-target="#toggle1">control_group</span>
+								</h3>
+
+								<div class="form-group f" id="toggle1">
+									<div class="row">
+										<label for="Input_target_value" class="col-sm-2">target_value</label>
+										<div class="col-sm-10">
+											<input name="control_group.target_value" type="text"
+												class="form-control" id="Input_target_value"
+												placeholder="target_value">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="Input_control_value" class="col-sm-2">control_value</label>
+										<div class="col-sm-10">
+											<input name="control_group.control_value" type="text"
+												class="form-control" id="Input_control_value"
+												placeholder="control_value">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="input_type_value" class="col-sm-2">type</label>
+										<div class="col-sm-10">
+											<input name="control_group.type" type="text"
+												class="form-control" id="input_type_value"
+												placeholder="type">
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="form-group">
+								<h3>
+									<span class="glyphicon glyphicon-collapse-down"
+										data-toggle="collapse" data-target="#toggle2">validity</span>
+								</h3>
+								<div class="form-group f" id="toggle2">
+									<div class="row">
+										<label for="end_date" class="col-sm-2">end_date</label>
+										<div class="col-sm-10">
+											<input name="validity.end_date" type="datetime-local"
+												value="2011-08-19T13:45:00" class="form-control"
+												id="end_date" placeholder="start_date" required="required">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="start_date_ux" class="col-sm-2">start_date_ux</label>
+										<div class="col-sm-10">
+											<input name="validity.start_date_ux" type="text"
+												class="form-control" id="start_date_ux"
+												placeholder="start_date_ux" required="required">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="end_date_ux" class="col-sm-2">end_date_ux</label>
+										<div class="col-sm-10">
+											<input name="validity.end_date_ux" type="text"
+												class="form-control" id="end_date_ux"
+												placeholder="end_date_ux" required="required">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="start_date" class="col-sm-2">start_date</label>
+										<div class="col-sm-10">
+											<input name="validity.start_date" type="datetime-local"
+												value="2011-08-19T13:45:00" class="form-control"
+												id="start_date" placeholder="start_date" required="required">
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+
+
+
+							<div class="form-group">
+								<h3>
+									<span class="glyphicon glyphicon-collapse-down"
+										data-toggle="collapse" data-target="#toggle2">conditions</span>
+								</h3>
+								<div class="form-group f" id="toggle3">
+									<div class="row">
+										<label for="conditions_desc_input" class="col-sm-2">description</label>
+										<div class="col-sm-10">
+											<input name="conditions.description" type="text"
+												class="form-control" id="conditions_desc_input"
+												placeholder="description" required="required">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="conditions_id_input" class="col-sm-2"> ID
+										</label>
+										<div class="col-sm-10">
+											<input name="conditions.id" type="text"
+												id="conditions_id_input" class="form-control"
+												placeholder="ID" required="required">
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="conditions_type_input" class="col-sm-2">type</label>
+										<div class="col-sm-10">
+											<input name="conditions.type" type="text"
+												class="form-control" id="conditions_type_input"
+												placeholder="type" required="required">
+										</div>
+									</div>
+
+
+								</div>
+								<button type="button" class="btn btn-warning"
+									onclick="addInput();">
+									<span class="glyphicon glyphicon-plus"> </span> Add another
+									Object
+								</button>
+
+							</div>
+
+							<button type="submit" name="submit" id="input"
+								class="btn btn-primary" value="Submit" onclick="getJsonFormData();">Submit</button>
+
+						</form>
+					</div>
+					<!-- Modal Footer -->
+					<div class="modal-footer">
+						<button id="closeInsert" type="button" class="btn btn-default"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<h2>JSON</h2>
+		<pre id="result">
+</pre>
+
 	</div>
-	</div>
-	
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-	
 </body>
 </html>
